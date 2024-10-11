@@ -24,7 +24,7 @@ void setup() {
   rateChar = pService->createCharacteristic(RATE_CHAR, BLECharacteristic::PROPERTY_WRITE);
   typeChar = pService->createCharacteristic(TYPE_CHAR, BLECharacteristic::PROPERTY_WRITE);
   modeChar = pService->createCharacteristic(MODE_CHAR, BLECharacteristic::PROPERTY_WRITE);
-  isRunningChar = pService->createCharacteristic(IS_RUNNING_CHAR, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
+  isPumpingChar = pService->createCharacteristic(IS_PUMPING_CHAR, BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_READ);
 
 
 
@@ -47,20 +47,56 @@ void loop() {
   rate   = rateChar->getValue().toFloat();
   type   = typeChar->getValue().toInt();
   mode   = modeChar->getValue().toInt();
-  
+  isPumping = isPumpingChar->getValue().toInt();
+
   //type  = typeChar->getData();
   //mode  = modeChar->getData();
   if(deviceConnected)
   {
-    Serial.printf("Target:  %f \n", target);
-   // Serial.println("Target_uuid: " + targetChar->getUUID().toString());
     Serial.printf("Rate:  %f \n", rate);
-   // Serial.println("rate_uuid: " + rateChar->getUUID().toString());
+    Serial.printf("Target:  %f \n", target);
+   
+    Serial.printf("Type: %d \n",type);
+    Serial.printf("Mode: %d\n", mode);
+    Serial.printf("Running: %d\n",isPumping);
+    Serial.println("-----------------");
 
-   Serial.printf("Type: %d \n",type);
-   Serial.printf("Mode: %d\n", mode);
-   Serial.println("-----------------");
+    calculateSteps();
   }
+
   
-    delay(5000);
+  while (isPumping == 1) 
+  {
+    isPumping = isPumpingChar->getValue().toInt();
+    Serial.printf("Running: %d\n",isPumping);
+    if (isPumping == 0 || deviceConnected == false) 
+    {
+      stopPump();
+      break;
+    }
+    else 
+    {
+      startPump();
+    }
+
+    delay(1000);
+  }
+
+  
+  delay(1000);
+}
+
+void calculateSteps()
+{
+
+}
+
+void stopPump() 
+{
+
+}
+
+void startPump() 
+{
+
 }
